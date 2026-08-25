@@ -6,10 +6,10 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
     const hasAdminKey = getConfiguredAdminKey(env) !== null;
 
     const columns = [
-        { key: 'short_url', title: '短链' },
+        { key: 'short_url', title: '短链', ellipsis: true },
         { key: 'long_url', title: '长链', ellipsis: true },
-        { key: 'created_at', title: '创建时间', width: '170px' },
-        { type: 'actions', title: '操作', width: '120px' }
+        { key: 'created_at', title: '创建时间', width: '150px' },
+        { type: 'actions', title: '操作', width: '110px' }
     ];
 
     const actions = [
