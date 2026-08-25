@@ -1948,7 +1948,7 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                     .subconverter-textarea::placeholder, .subconverter-input::placeholder { color: var(--muted); }
                     .subconverter-textarea:focus, .subconverter-input:focus {
                         border-color: var(--accent-outline);
-                        box-shadow: 0 0 0 4px var(--accent-ring);
+                        box-shadow: none;
                     }
 
                     /* 下拉控件 */
