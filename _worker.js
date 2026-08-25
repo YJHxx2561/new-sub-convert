@@ -1785,10 +1785,14 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                     * { box-sizing: border-box; }
 
                     /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
-                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus { outline: none; }
+                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus,
+                    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: none; }
                     .ctl__box:focus, .sub-ghost-btn:focus, .subconverter-main-btn:focus, .sub-checkbox:focus,
                     .subconverter-topbar__link:focus, .subconverter-social-btn:focus, .sub-dialog__close:focus,
-                    .subconverter-advanced__trigger:focus { outline: none; box-shadow: none; }
+                    .subconverter-advanced__trigger:focus,
+                    .ctl__box:focus-visible, .sub-ghost-btn:focus-visible, .subconverter-main-btn:focus-visible, .sub-checkbox:focus-visible,
+                    .subconverter-topbar__link:focus-visible, .subconverter-social-btn:focus-visible, .sub-dialog__close:focus-visible,
+                    .subconverter-advanced__trigger:focus-visible { outline: none; box-shadow: none; }
 
                     html, body { margin: 0; padding: 0; }
                     body.light-mode, body.dark-mode {
@@ -1956,7 +1960,7 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                         font-size: 14px;
                         transition: border-color 0.18s ease, box-shadow 0.18s ease;
                     }
-                    .ctl__box.is-open, .ctl__box:hover { border-color: var(--accent-outline); box-shadow: 0 0 0 4px var(--accent-ring); }
+                    .ctl__box.is-open, .ctl__box:hover { border-color: var(--accent-outline); }
                     .ctl__box.is-disabled { cursor: not-allowed; opacity: 0.6; }
                     .ctl__box input {
                         flex: 1;
