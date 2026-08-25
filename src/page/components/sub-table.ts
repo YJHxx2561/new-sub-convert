@@ -72,6 +72,7 @@ export function SubTable(): string {
                     }
                     table {
                         width: 100%;
+                        min-width: 520px;
                         border-collapse: collapse;
                         table-layout: fixed;
                     }
@@ -136,6 +137,11 @@ export function SubTable(): string {
                         padding: 28px 12px;
                         text-align: center;
                         color: var(--text-secondary, var(--text-disabled));
+                    }
+                    /* 窄屏：表格保持最小宽度以便横向滚动查看完整内容 */
+                    @media (max-width: 640px) {
+                        thead th, tbody td { padding: 8px 10px; }
+                        thead th { font-size: 13px; }
                     }
                 \`;
                 this.shadowRoot.appendChild(style);
