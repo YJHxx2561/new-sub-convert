@@ -229,7 +229,7 @@ export function showPage(request: Request, env: Env): Response {
                     .subconverter-textarea::placeholder, .subconverter-input::placeholder { color: var(--muted); }
                     .subconverter-textarea:focus, .subconverter-input:focus {
                         border-color: var(--accent-outline);
-                        box-shadow: 0 0 0 4px var(--accent-ring);
+                        box-shadow: none;
                     }
 
                     /* 下拉控件 */
