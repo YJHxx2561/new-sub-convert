@@ -1,0 +1,52 @@
+name: Deploy to Cloudflare
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+        inputs:
+            deploy_target:
+                description: 'Deploy target: worker (default) or pages'
+                type: choice
+                options:
+                    - worker
+                    - pages
+                default: worker
+
+concurrency:
+    group: cloudflare-deploy
+    cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: latest
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: latest
+            - name: Install dependencies
+              run: pnpm install --no-frozen-lockfile
+            - name: Build Cloudflare Worker bundle
+              run: pnpm run build:worker
+            - name: Deploy to Cloudflare Worker
+              if: ${{ github.event.inputs.deploy_target != 'pages' }}
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  workingDirectory: .
+                  command: deploy
+            - name: Deploy to Cloudflare Pages
+              if: ${{ github.event.inputs.deploy_target == 'pages' }}
+              uses: cloudflare/wrangler-action@v3
+              with:
+                  apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                  command: pages deploy dist/worker --project-name=sub-convert

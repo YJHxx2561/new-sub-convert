@@ -127,25 +127,74 @@ pnpm build:node     # 仅 Node 产物
 | `dist/worker/_worker.js` | Cloudflare Worker / Pages 自包含 bundle           |
 | `dist/node/server.mjs`   | Node.js / Docker 入口，node_modules 保持 external |
 
-### ☁️ 部署方式一：Cloudflare Worker（wrangler）
+### ☁️ 部署到 Cloudflare
+
+下面三种方式任选其一，均可将本项目部署到 Cloudflare。构建产物统一为自包含的自定义 Worker bundle（`dist/worker/_worker.js`，约几百 KB，可直接作为 Worker 也能作为 Pages 部署）。
+
+#### 方式一：直接上传文件
+
+适合不想关联 Git、想快速上线的部署，全程在 Cloudflare 面板完成。
+
+**① 本地构建 Worker 产物：**
 
 ```bash
-pnpm deploy   # 等价于 wrangler deploy
+pnpm install
+pnpm build:worker   # 产出 dist/worker/_worker.js
 ```
 
-### ☁️ 部署方式二：Cloudflare Pages（直接上传）
+**② 在 Dashboard 上传：**
 
-1. 登录 Cloudflare Dashboard → Workers & Pages → 创建 Pages 项目
-2. 选择 "直接上传"
-3. 从 `release` 分支下载 `_worker.zip`（由 GitHub Action 自动产出）
-4. 上传并等待部署完成
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages** → **创建** → **Worker** → 选择名称后点「部署」
+2. 进入 Worker 的 **编辑代码** 页面
+3. 将 `dist/worker/_worker.js` 的内容全选粘贴覆盖默认代码（或用 **上传** 直接上传该文件）
+4. 点击「部署」，即可访问 `https://sub-convert.<你的子域>.workers.dev`
 
-### ☁️ 部署方式三：通过 Git 仓库部署到 Pages
+> 也可用 CLI 一步完成：`npx wrangler deploy`（需登录 Cloudflare）。
+> 若未在本地构建，可直接从 `release` 分支（由 GitHub Action 产出）下载现成的 `_worker.js` / `_worker.zip`。
 
-1. Fork 本仓库
-2. Cloudflare Dashboard → Workers & Pages → 创建 Pages 项目
-3. "连接到 Git" 并选择 Fork 后的仓库
-4. 构建命令、构建输出目录均留空，部署分支选择 `release`
+如需启用短链，在 Worker **设置 → 变量** 中配置下方环境变量，并在 **设置 → 绑定 → 添加 D1 数据库** 绑定数据库，变量名使用 `DB`。
+
+#### 方式二：在 Cloudflare 面板连接 GitHub 账号（Pages）
+
+全程在面板完成，无需本地环境，仓库更新后还可手动重新部署：
+
+1. [Fork](https://github.com/yjhup/sub-convert) 本仓库
+2. 登录 Cloudflare Dashboard → **Workers & Pages** → **创建** → **Pages → 连接到 Git**
+3. 按提示授权 Cloudflare 连接你的 GitHub 账号，然后选择 Fork 后的仓库
+4. 框架预设选择 **None**；**构建命令**与**构建输出目录**均留空
+5. **部署分支**选择 `release`——该分支由 GitHub Action 每次发布（打 tag）自动产出已构建好的 `_worker.js`，可直接部署
+6. 点击「保存并部署」，即获得 `https://<项目名>.pages.dev`
+
+> 若选择 `main` 分支，则 Cloudflare 会自行构建（需在构建设置中填写依赖安装命令 `pnpm install` 与构建命令 `pnpm build:worker`，并将**构建输出目录**设为 `dist/worker`，确保 `_worker.js` 位于输出根目录）；选择 `release` 分支则免去构建步骤，更简单可靠。
+> Pages 的短链功能需在 **设置 → 变量** 配置环境变量并绑定 D1 数据库。
+
+#### 方式三：使用 GitHub Action 自动部署
+
+仓库内置 [`cloudflare-deploy.yml`](.github/workflows/cloudflare-deploy.yml)，推送到 `main` 或手动触发时自动构建并部署，无需在面板操作。
+
+**① 在 Cloudflare 创建 API Token**
+
+进入 [API Tokens](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → **Edit Cloudflare Workers** 模板：
+
+- **Account Resources**：Include → 你的账号
+- **Permissions**：至少包含 **Worker Scripts → Edit**（部署 Worker），可按需补充 D1 / 其它权限
+- 点击 Continue → Create，复制生成的 Token（只显示一次）
+
+**② 在 GitHub 仓库配置 Secrets**
+
+进入 GitHub 仓库 **Settings → Secrets and variables → Actions → New repository secret**：
+
+| Secret | 说明 | 必填 |
+| --- | --- | --- |
+| `CLOUDFLARE_API_TOKEN` | 上一步创建的 API Token | ✅ |
+| `CLOUDFLARE_ACCOUNT_ID` | 你的 Cloudflare 账号 ID（右侧栏 Account ID） | 建议 |
+
+**③ 触发部署**
+
+- 推送代码到 `main` 分支会自动部署为 Cloudflare **Worker**；
+- 也可在仓库 **Actions** 页面 → 左侧 **Deploy to Cloudflare** → **Run workflow**，手动选择部署到 **worker**（默认，`wrangler deploy`）或 **pages**（`wrangler pages deploy dist/worker`）。
+
+> 完整发布自动化：推送标签 `v*.*.*` 时，现有 [`cloudflare-release`](.github/workflows/cloudflare-release.yml) 会构建并把产物推送到 `release` 分支，供「直接上传」或「连接 Git」使用。
 
 ### 🐳 部署方式四：Docker
 
