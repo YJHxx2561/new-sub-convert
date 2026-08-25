@@ -69,6 +69,11 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                             color: var(--text-disabled);
                         }
 
+                        .sub-button:focus,
+                        .sub-button:focus-visible {
+                            outline: none;
+                        }
+
                         /* 波纹效果 */
                         .sub-button::after {
                             content: '';
@@ -581,6 +586,10 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                     .sub-modal__close:hover {
                         color: var(--primary-color);
                     }
+                    .sub-modal__close:focus,
+                    .sub-modal__close:focus-visible {
+                        outline: none;
+                    }
                     .sub-modal__body {
                         padding: 16px;
                     }
@@ -792,6 +801,11 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                     .action-btn.danger {
                         color: #ff4d4f;
                     }
+                    .action-btn:focus,
+                    .action-btn:focus-visible {
+                        outline: none;
+                        box-shadow: none;
+                    }
                     .empty,
                     .loading {
                         padding: 28px 12px;
@@ -955,7 +969,6 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                     .sub-textarea__inner:focus {
                         outline: none;
                         border-color: var(--primary-color);
-                        box-shadow: 0 0 0 2px var(--shadow);
                     }
                     .sub-textarea__inner::placeholder {
                         color: var(--text-secondary);
@@ -1063,7 +1076,7 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                      * 主题变量：与首页（subconvert 转换页）保持一致的设计令牌。
                      * 通过 body.light-mode / body.dark-mode 切换。
                      */
-                    body.light-mode .subconverter-page {
+                    body.light-mode {
                         --page-surface: #d8e0e5;
                         --page-grid: rgba(51, 65, 85, 0.05);
                         --bg: rgba(241, 245, 247, 0.84);
@@ -1080,7 +1093,7 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                         --shadow: 0 24px 56px rgba(51, 65, 85, 0.12);
                     }
 
-                    body.dark-mode .subconverter-page {
+                    body.dark-mode {
                         --page-surface: transparent;
                         --page-grid: rgba(148, 163, 184, 0.05);
                         --bg: rgba(7, 16, 30, 0.78);
@@ -1101,7 +1114,7 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                      * 将旧设计系统（sub-* 组件）使用的令牌映射到首页主题令牌，
                      * 使 sub-table / sub-modal / sub-button / sub-form 等组件一套皮肤。
                      */
-                    .subconverter-page {
+                    body {
                         --background: var(--bg);
                         --background-primary: var(--panel);
                         --background-secondary: var(--soft);
@@ -1114,7 +1127,6 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                         --primary-color: var(--accent);
                         --primary-hover: var(--accent-strong);
                         --primary-active: var(--accent);
-                        --shadow: rgba(2, 6, 23, 0.4);
                         --radius: 12px;
                         --transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
                     }
