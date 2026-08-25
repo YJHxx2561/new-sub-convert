@@ -431,19 +431,20 @@ export function showPage(request: Request, env: Env): Response {
                         border-radius: 22px;
                         background: var(--panel);
                     }
-                    .subconverter-output .subconverter-field__label { padding-bottom: 8px; }
-                    .output-group { display: flex; gap: 10px; align-items: stretch; }
-                    .output-group .subconverter-input { flex: 1; min-width: 0; }
+                    .subconverter-output .subconverter-field__label { padding-bottom: 10px; letter-spacing: 0.2px; }
+                    .output-group { display: flex; gap: 0; align-items: stretch; }
+                    .output-group .subconverter-input { flex: 1; min-width: 0; border-radius: 14px 0 0 14px; }
                     .output-group .output-copy {
                         flex: none;
                         height: 46px;
-                        padding: 0 20px;
+                        padding: 0 22px;
                         border: 0;
-                        border-radius: 12px;
+                        border-radius: 0 14px 14px 0;
                         background: #0f172a;
                         color: #fff;
                         font-size: 14px;
                         font-weight: 600;
+                        letter-spacing: 0.4px;
                         cursor: pointer;
                         display: inline-flex;
                         align-items: center;
@@ -569,8 +570,9 @@ export function showPage(request: Request, env: Env): Response {
                         .subconverter-main-btn { width: 100%; }
                         .subconverter-social-dock { right: 12px; bottom: 12px; padding: 8px; gap: 8px; }
                         .subconverter-social-btn { width: 44px; height: 44px; }
-                        .output-group { flex-direction: column; }
-                        .output-group .output-copy { width: 100%; justify-content: center; }
+                        .output-group { flex-direction: column; gap: 10px; }
+                        .output-group .subconverter-input { border-radius: 14px; }
+                        .output-group .output-copy { width: 100%; justify-content: center; border-radius: 14px; }
                         .sub-popover__panel { width: 88vw; max-width: 88vw; left: 0; }
                         .sub-popover__grid { grid-template-columns: 1fr; }
                     }
