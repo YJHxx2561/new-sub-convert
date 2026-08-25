@@ -59,7 +59,7 @@ export function showPage(request: Request, env: Env): Response {
                     }
 
                     body.dark-mode .subconverter-page {
-                        --page-surface: transparent;
+                        --page-surface: #0b1120;
                         --page-grid: rgba(148, 163, 184, 0.05);
                         --bg: rgba(7, 16, 30, 0.78);
                         --panel: rgba(8, 20, 38, 0.92);
@@ -86,6 +86,9 @@ export function showPage(request: Request, env: Env): Response {
                     .ctl__box:focus-visible, .sub-ghost-btn:focus-visible, .subconverter-main-btn:focus-visible, .sub-checkbox:focus-visible,
                     .subconverter-topbar__link:focus-visible, .subconverter-social-btn:focus-visible, .sub-dialog__close:focus-visible,
                     .subconverter-advanced__trigger:focus-visible { outline: none; box-shadow: none; }
+
+                    /* 兜底：页面内任意可聚焦元素点击/聚焦都不出现蓝框 */
+                    .subconverter-page :focus, .subconverter-page :focus-visible { outline: none !important; box-shadow: none !important; }
 
                     html, body { margin: 0; padding: 0; }
                     body.light-mode, body.dark-mode {

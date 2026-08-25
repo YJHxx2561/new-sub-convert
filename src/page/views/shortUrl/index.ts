@@ -49,7 +49,7 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                     }
 
                     body.dark-mode {
-                        --page-surface: transparent;
+                        --page-surface: #0b1120;
                         --page-grid: rgba(148, 163, 184, 0.05);
                         --bg: rgba(7, 16, 30, 0.78);
                         --panel: rgba(8, 20, 38, 0.92);
@@ -89,7 +89,14 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                     * { box-sizing: border-box; }
 
                     /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
-                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus { outline: none; }
+                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus,
+                    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: none; }
+
+                    /* 兜底：页面内任意可聚焦元素点击/聚焦都不出现蓝框 */
+                    .subconverter-page :focus, .subconverter-page :focus-visible,
+                    .admin-key-input:focus, .admin-key-input:focus-visible,
+                    .subconverter-theme-btn:focus, .subconverter-theme-btn:focus-visible,
+                    .subconverter-topbar__link:focus, .subconverter-topbar__link:focus-visible { outline: none !important; box-shadow: none !important; }
 
                     html, body { margin: 0; padding: 0; }
                     body.light-mode, body.dark-mode {
