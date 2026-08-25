@@ -77,6 +77,12 @@ export function showPage(request: Request, env: Env): Response {
 
                     * { box-sizing: border-box; }
 
+                    /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
+                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus { outline: none; }
+                    .ctl__box:focus, .sub-ghost-btn:focus, .subconverter-main-btn:focus, .sub-checkbox:focus,
+                    .subconverter-topbar__link:focus, .subconverter-social-btn:focus, .sub-dialog__close:focus,
+                    .subconverter-advanced__trigger:focus { outline: none; box-shadow: none; }
+
                     html, body { margin: 0; padding: 0; }
                     body.light-mode, body.dark-mode {
                         background: var(--page-surface, #0b1120);
@@ -1216,9 +1222,6 @@ export function showPage(request: Request, env: Env): Response {
                             document.addEventListener('click', function (e) {
                                 if (!pop.contains(e.target)) pop.classList.remove('is-open');
                             });
-                            // 初始默认展开：保证项目1原有高级项可用性可见
-                            advWrap.classList.add('is-open');
-                            advTrigger.classList.add('is-open');
                         })();
 
                         // ------- 后端版本检测（project1 /version 兼容） -------

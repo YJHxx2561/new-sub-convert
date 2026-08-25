@@ -22,7 +22,7 @@ export class UrlService {
         if (['clash', 'clashr'].includes(convertType)) {
             const originConfig = await restore.getClashConfig();
             return {
-                body: dump(originConfig, { indent: 2, lineWidth: 200 }),
+                body: dump(originConfig, { indent: 2, lineWidth: -1, flowLevel: 2 }),
                 contentType: 'text/yaml; charset=UTF-8'
             };
         }

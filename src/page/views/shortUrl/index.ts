@@ -1,8 +1,5 @@
 import { getConfiguredAdminKey } from '../../../shared/adminKey';
 import { SubButton, SubForm, SubFormItem, SubMessage, SubModal, SubTable, SubTextarea } from '../../components';
-import { theme } from '../../script/theme';
-import { layout } from '../../style/layout';
-import { style } from '../../style/style';
 
 export function showShortUrlPage(_request: Request, env: Env): Response {
     const hasDBConfig = env.SHORT_URL_ENABLED === true;
@@ -22,14 +19,239 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
 
     const html = `
     <!DOCTYPE html>
-        <html lang="zh-CN" theme="dark" class="short-url-page">
+        <html lang="zh-CN" class="short-url-page">
             <head>
                 <meta charset="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>短链管理</title>
-                ${style()}
-                ${layout()}
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
                 <style>
+                    /*
+                     * 主题变量：与首页（subconvert 转换页）保持一致的设计令牌。
+                     * 通过 body.light-mode / body.dark-mode 切换。
+                     */
+                    body.light-mode .subconverter-page {
+                        --page-surface: #d8e0e5;
+                        --page-grid: rgba(51, 65, 85, 0.05);
+                        --bg: rgba(241, 245, 247, 0.84);
+                        --panel: rgba(246, 249, 250, 0.92);
+                        --soft: #e5ecef;
+                        --text: #000;
+                        --muted: rgba(15, 23, 42, 0.66);
+                        --line: rgba(51, 65, 85, 0.12);
+                        --accent: #2f6f68;
+                        --accent-strong: #4e708b;
+                        --accent-fog: rgba(78, 112, 139, 0.12);
+                        --accent-ring: rgba(78, 112, 139, 0.16);
+                        --accent-outline: rgba(78, 112, 139, 0.42);
+                        --shadow: 0 24px 56px rgba(51, 65, 85, 0.12);
+                    }
+
+                    body.dark-mode .subconverter-page {
+                        --page-surface: transparent;
+                        --page-grid: rgba(148, 163, 184, 0.05);
+                        --bg: rgba(7, 16, 30, 0.78);
+                        --panel: rgba(8, 20, 38, 0.92);
+                        --soft: rgba(15, 23, 42, 0.7);
+                        --text: #f8fbff;
+                        --muted: rgba(226, 232, 240, 0.7);
+                        --line: rgba(148, 163, 184, 0.16);
+                        --accent: #38bdf8;
+                        --accent-strong: #67e8f9;
+                        --accent-fog: rgba(56, 189, 248, 0.16);
+                        --accent-ring: rgba(56, 189, 248, 0.14);
+                        --accent-outline: rgba(56, 189, 248, 0.45);
+                        --shadow: 0 30px 80px rgba(2, 6, 23, 0.52);
+                    }
+
+                    /*
+                     * 将旧设计系统（sub-* 组件）使用的令牌映射到首页主题令牌，
+                     * 使 sub-table / sub-modal / sub-button / sub-form 等组件一套皮肤。
+                     */
+                    .subconverter-page {
+                        --background: var(--bg);
+                        --background-primary: var(--panel);
+                        --background-secondary: var(--soft);
+                        --background-disabled: var(--soft);
+                        --border-color: var(--line);
+                        --border-hover: var(--accent-outline);
+                        --text-primary: var(--text);
+                        --text-secondary: var(--muted);
+                        --text-disabled: var(--muted);
+                        --primary-color: var(--accent);
+                        --primary-hover: var(--accent-strong);
+                        --primary-active: var(--accent);
+                        --shadow: rgba(2, 6, 23, 0.4);
+                        --radius: 12px;
+                        --transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+                    }
+
+                    * { box-sizing: border-box; }
+
+                    /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
+                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus { outline: none; }
+
+                    html, body { margin: 0; padding: 0; }
+                    body.light-mode, body.dark-mode {
+                        background: var(--page-surface, #0b1120);
+                        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+                    }
+
+                    .subconverter-page {
+                        position: relative;
+                        min-height: 100vh;
+                        padding: 28px 18px 104px;
+                        color: var(--text);
+                        overflow-x: hidden;
+                        background-color: var(--page-surface, #0b1120);
+                        background-image:
+                            linear-gradient(var(--page-grid, rgba(148,163,184,0.05)) 1px, transparent 1px),
+                            linear-gradient(90deg, var(--page-grid, rgba(148,163,184,0.05)) 1px, transparent 1px);
+                        background-size: 24px 24px;
+                        transition: background-color 0.3s ease;
+                    }
+
+                    .subconverter-glow {
+                        position: absolute;
+                        border-radius: 999px;
+                        filter: blur(18px);
+                        pointer-events: none;
+                    }
+                    .subconverter-glow--one { left: -120px; top: 20px; width: 320px; height: 320px; background: radial-gradient(circle, rgba(34,211,238,0.24) 0, rgba(34,211,238,0) 72%); }
+                    .subconverter-glow--two { right: -120px; bottom: 40px; width: 360px; height: 360px; background: radial-gradient(circle, rgba(16,185,129,0.18) 0, rgba(16,185,129,0) 72%); }
+                    body.light-mode .subconverter-glow { display: none; }
+
+                    .subconverter-topbar {
+                        position: relative;
+                        z-index: 2;
+                        max-width: 1032px;
+                        margin: 0 auto 0;
+                        padding: 0 16px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 12px;
+                    }
+                    .subconverter-topbar__link {
+                        color: var(--muted);
+                        font-size: 13px;
+                        font-weight: 600;
+                        text-decoration: none;
+                        padding: 8px 12px;
+                        border: 1px solid var(--line);
+                        border-radius: 12px;
+                        background: var(--bg);
+                        transition: color 0.18s ease, border-color 0.18s ease;
+                    }
+                    .subconverter-topbar__link:hover { color: var(--accent); border-color: var(--accent-outline); }
+
+                    .subconverter-theme-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 38px;
+                        height: 38px;
+                        border: 1px solid var(--line);
+                        border-radius: 12px;
+                        background: var(--bg);
+                        color: var(--text);
+                        cursor: pointer;
+                        font-size: 20px;
+                        font-family: ui-monospace, monospace;
+                        font-weight: 700;
+                        line-height: 1;
+                        transition: color 0.18s ease, border-color 0.18s ease;
+                    }
+                    .subconverter-theme-btn:hover { color: var(--accent); border-color: var(--accent-outline); }
+
+                    .subconverter-layout {
+                        position: relative;
+                        z-index: 1;
+                        width: 100%;
+                        max-width: 1032px;
+                        margin: 18px auto 0;
+                        padding: 16px;
+                    }
+
+                    .subconverter-card {
+                        border: 1px solid var(--line);
+                        border-radius: 28px;
+                        background: var(--bg);
+                        box-shadow: var(--shadow);
+                        backdrop-filter: blur(18px) saturate(180%);
+                        overflow: hidden;
+                    }
+                    .subconverter-card__header {
+                        padding: 28px 28px 20px;
+                        border-bottom: 1px solid var(--line);
+                    }
+                    .subconverter-card__body { padding: 22px 28px 28px; }
+
+                    .subconverter-hero { display: flex; flex-direction: column; gap: 10px; }
+                    .subconverter-hero__eyebrow {
+                        display: inline-flex;
+                        font: 700 12px/1 "Space Grotesk", "Noto Sans SC", sans-serif;
+                        letter-spacing: 0.24em;
+                        text-transform: uppercase;
+                        color: var(--accent);
+                    }
+                    .short-url-titlebar {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 16px;
+                        flex-wrap: wrap;
+                    }
+                    .short-url-title {
+                        margin: 0;
+                        font: 700 30px/1.1 "Space Grotesk", "Noto Sans SC", sans-serif;
+                        letter-spacing: -0.02em;
+                        color: var(--text);
+                    }
+                    .short-url-desc { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+                    .short-url-toolbar { margin: 0 0 18px; display: flex; justify-content: flex-end; }
+
+                    /* 分页 */
+                    .short-url-pagination {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        gap: 8px;
+                        margin-top: 18px;
+                        flex-wrap: wrap;
+                    }
+                    .short-url-pagination span { color: var(--muted); font-size: 13px; }
+                    .short-url-pagination button {
+                        padding: 6px 14px;
+                        border: 1px solid var(--line);
+                        border-radius: 10px;
+                        background: var(--panel);
+                        color: var(--text);
+                        font-size: 13px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: color 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
+                    }
+                    .short-url-pagination button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent-outline); }
+                    .short-url-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+                    .admin-key-input {
+                        width: 100%;
+                        min-height: 40px;
+                        padding: 8px 14px;
+                        border: 1px solid transparent;
+                        border-radius: 14px;
+                        background: var(--soft);
+                        color: var(--text);
+                        box-sizing: border-box;
+                        font-size: 14px;
+                        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+                    }
+                    .admin-key-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-ring); }
+                    .admin-key-input::placeholder { color: var(--muted); }
+
                     .modal-form-actions {
                         display: flex;
                         justify-content: flex-end;
@@ -37,82 +259,63 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         gap: 10px;
                     }
 
-                    .admin-key-input {
-                        width: 100%;
-                        min-height: 32px;
-                        padding: 4px 11px;
-                        border: 1px solid var(--border-color);
-                        border-radius: var(--radius);
-                        background: var(--background);
-                        color: var(--text-primary);
-                        box-sizing: border-box;
-                        font-size: 14px;
-                        outline: none;
-                        transition: var(--transition);
-                    }
+                    #short-url-main[hidden] { display: none !important; }
 
-                    .admin-key-input:focus {
-                        border-color: var(--primary-color);
-                        box-shadow: 0 0 0 2px var(--shadow);
-                    }
-
-                    #short-url-main[hidden] {
-                        display: none !important;
+                    @media (max-width: 640px) {
+                        .subconverter-page { padding: 16px 10px 92px; }
+                        .subconverter-card__header, .subconverter-card__body { padding-left: 18px; padding-right: 18px; }
+                        .subconverter-layout { padding: 0; }
                     }
                 </style>
             </head>
-            <body>
-                ${theme()}
+            <body class="dark-mode">
+                <div class="subconverter-page">
+                    <div class="subconverter-glow subconverter-glow--one"></div>
+                    <div class="subconverter-glow subconverter-glow--two"></div>
 
-                <main id="short-url-main" hidden>
-                    <header>
-                        <span class="header__icon">
-                            <svg
-                                t="1735896323200"
-                                class="icon"
-                                viewBox="0 0 1024 1024"
-                                version="1.1"
-                                xmlns="http://www.w3.org/2000/svg"
-                                p-id="1626"
-                            >
-                                <path
-                                    d="M512 42.666667A464.64 464.64 0 0 0 42.666667 502.186667 460.373333 460.373333 0 0 0 363.52 938.666667c23.466667 4.266667 32-9.813333 32-22.186667v-78.08c-130.56 27.733333-158.293333-61.44-158.293333-61.44a122.026667 122.026667 0 0 0-52.053334-67.413333c-42.666667-28.16 3.413333-27.733333 3.413334-27.733334a98.56 98.56 0 0 1 71.68 47.36 101.12 101.12 0 0 0 136.533333 37.973334 99.413333 99.413333 0 0 1 29.866667-61.44c-104.106667-11.52-213.333333-50.773333-213.333334-226.986667a177.066667 177.066667 0 0 1 47.36-124.16 161.28 161.28 0 0 1 4.693334-121.173333s39.68-12.373333 128 46.933333a455.68 455.68 0 0 1 234.666666 0c89.6-59.306667 128-46.933333 128-46.933333a161.28 161.28 0 0 1 4.693334 121.173333A177.066667 177.066667 0 0 1 810.666667 477.866667c0 176.64-110.08 215.466667-213.333334 226.986666a106.666667 106.666667 0 0 1 32 85.333334v125.866666c0 14.933333 8.533333 26.88 32 22.186667A460.8 460.8 0 0 0 981.333333 502.186667 464.64 464.64 0 0 0 512 42.666667"
-                                    fill="#231F20"
-                                    p-id="1627"
-                                ></path>
-                            </svg>
-                        </span>
-
-                        <span class="header__title">短链管理</span>
-
-                        <div class="header__right">
-                            <a class="header__nav" href="/">订阅转换</a>
-                            <button class="header__theme" type="button"></button>
+                    <div class="subconverter-topbar">
+                        <span></span>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <a class="subconverter-topbar__link" href="/">订阅转换</a>
+                            <button class="subconverter-theme-btn" type="button" id="theme-toggle" aria-label="切换主题" title="切换主题">
+                                <span id="theme-icon">☾</span>
+                            </button>
                         </div>
-                    </header>
+                    </div>
 
-                    <section class="short-url-list">
-                        <div class="short-url-toolbar">
-                            <sub-button id="open-create-modal-btn" type="default">
-                                生成短链
-                            </sub-button>
+                    <div class="subconverter-layout">
+                        <div class="subconverter-card" id="short-url-main" hidden>
+                            <div class="subconverter-card__header">
+                                <div class="subconverter-hero">
+                                    <span class="subconverter-hero__eyebrow">Short Links</span>
+                                    <div class="short-url-titlebar">
+                                        <h2 class="short-url-title">短链管理</h2>
+                                        <div class="short-url-toolbar">
+                                            <sub-button id="open-create-modal-btn" type="primary">+ 生成短链</sub-button>
+                                        </div>
+                                    </div>
+                                    <p class="short-url-desc">创建、复制与删除你的短链记录。</p>
+                                </div>
+                            </div>
+                            <div class="subconverter-card__body">
+                                <sub-table
+                                    id="short-url-table"
+                                    row-key="short_code"
+                                    columns='${JSON.stringify(columns)}'
+                                    actions='${JSON.stringify(actions)}'
+                                    data="[]"
+                                    empty-text="暂无数据"
+                                ></sub-table>
+                                <div class="short-url-pagination" id="short-url-pagination">
+                                    <span id="pagination-total">共 0 条</span>
+                                    <button type="button" id="pagination-prev" disabled>上一页</button>
+                                    <span id="pagination-page">第 1/1 页</span>
+                                    <button type="button" id="pagination-next" disabled>下一页</button>
+                                </div>
+                            </div>
                         </div>
-                        <sub-table
-                            id="short-url-table"
-                            row-key="short_code"
-                            columns='${JSON.stringify(columns)}'
-                            actions='${JSON.stringify(actions)}'
-                            data="[]"
-                            empty-text="暂无数据"
-                        ></sub-table>
-                        <div class="short-url-pagination" id="short-url-pagination">
-                            <span id="pagination-total">共 0 条</span>
-                            <button type="button" id="pagination-prev" disabled>上一页</button>
-                            <span id="pagination-page">第 1/1 页</span>
-                            <button type="button" id="pagination-next" disabled>下一页</button>
-                        </div>
-                    </section>
-                </main>
+                    </div>
+                </div>
 
                 <sub-modal id="auth-modal" title="管理验证">
                     <sub-form-item label="管理密钥">
@@ -142,9 +345,7 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                     </sub-form>
                     <div class="modal-form-actions" slot="footer">
                         <sub-button id="cancel-create-btn" type="default">取消</sub-button>
-                        <sub-button id="create-short-url-btn" type="default">
-                            生成短链
-                        </sub-button>
+                        <sub-button id="create-short-url-btn" type="primary">生成短链</sub-button>
                     </div>
                 </sub-modal>
 
@@ -157,6 +358,39 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                 ${SubMessage()}
 
                 <script>
+                    // ---- 主题（与首页一致：手动 + 自动跟随系统） ----
+                    function initTheme() {
+                        var body = document.body;
+                        var icon = document.getElementById('theme-icon');
+                        function apply(theme) {
+                            body.classList.remove('light-mode', 'dark-mode');
+                            body.classList.add(theme);
+                            icon.textContent = theme === 'dark-mode' ? '☾' : '☀';
+                        }
+                        function detect() {
+                            var saved = window.localStorage.getItem('localTheme');
+                            if (saved === 'light-mode' || saved === 'dark-mode') { apply(saved); return; }
+                            var h = new Date().getHours();
+                            var theme = (h >= 19 || h < 7) ? 'dark-mode' : 'light-mode';
+                            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark-mode';
+                            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) theme = 'light-mode';
+                            apply(theme);
+                        }
+                        document.getElementById('theme-toggle').addEventListener('click', function () {
+                            var isDark = body.classList.contains('dark-mode');
+                            var next = isDark ? 'light-mode' : 'dark-mode';
+                            window.localStorage.setItem('localTheme', next);
+                            apply(next);
+                        });
+                        if (window.matchMedia) {
+                            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+                            var cb = function () { if (!window.localStorage.getItem('localTheme')) detect(); };
+                            if (mq.addEventListener) mq.addEventListener('change', cb);
+                            else if (mq.addListener) mq.addListener(cb);
+                        }
+                        detect();
+                    }
+
                     class ShortUrlManager {
                         #enabled = ${hasDBConfig};
                         #hasAdminKey = ${hasAdminKey};
@@ -183,7 +417,6 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         #nextBtn = document.querySelector('#pagination-next');
                         #totalEl = document.querySelector('#pagination-total');
                         #pageEl = document.querySelector('#pagination-page');
-                        #headerIcon = document.querySelector('.header__icon');
 
                         constructor() {
                             this.#bindEvents();
@@ -222,10 +455,6 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         }
 
                         #bindEvents() {
-                            this.#headerIcon?.addEventListener('click', () => {
-                                window.open('https://github.com/jwyGithub/sub-convert');
-                            });
-
                             this.#form?.addEventListener('form:change', e => {
                                 this.#model[e.detail.key] = e.detail.value;
                                 this.#form.setAttribute('model', JSON.stringify(this.#model));
@@ -464,7 +693,10 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         }
                     }
 
-                    new ShortUrlManager();
+                    document.addEventListener('DOMContentLoaded', () => {
+                        initTheme();
+                        new ShortUrlManager();
+                    });
                 </script>
             </body>
         </html>

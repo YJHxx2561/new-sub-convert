@@ -5,6 +5,34 @@ import { generateShortCode } from './types';
 export class D1UrlRepository implements IUrlRepository {
     constructor(private readonly db: D1Database) {}
 
+    /**
+     * 确保 short_url 表存在（含 created_at 列）。
+     * D1 不会像 Node 端那样在启动时自动建表，这里在入口调用一次，
+     * 避免未先执行 schema.sql/migration 就报 "no such table: short_url"。
+     * 该方法幂等，可安全重复调用。
+     */
+    async ensureSchema(): Promise<void> {
+        await this.db
+            .prepare(
+                `CREATE TABLE IF NOT EXISTS short_url (
+                    id INTEGER PRIMARY KEY,
+                    short_code TEXT,
+                    short_url TEXT,
+                    long_url TEXT,
+                    created_at TEXT
+                )`
+            )
+            .run();
+
+        // 兼容旧表：缺少 created_at 列时补齐
+        const col = await this.db
+            .prepare(`SELECT COUNT(*) as c FROM pragma_table_info('short_url') WHERE name = 'created_at'`)
+            .first<{ c: number }>();
+        if (!col?.c) {
+            await this.db.prepare('ALTER TABLE short_url ADD COLUMN created_at TEXT').run();
+        }
+    }
+
     async add(long_url: string, baseUrl: string): Promise<ShortUrl> {
         const code = generateShortCode();
         const short_url = `${baseUrl}/${code}`;
