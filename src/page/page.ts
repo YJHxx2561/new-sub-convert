@@ -77,15 +77,22 @@ export function showPage(request: Request, env: Env): Response {
 
                     * { box-sizing: border-box; }
 
-                    /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
-                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus,
-                    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: none; }
-                    .ctl__box:focus, .sub-ghost-btn:focus, .subconverter-main-btn:focus, .sub-checkbox:focus,
-                    .subconverter-topbar__link:focus, .subconverter-social-btn:focus, .sub-dialog__close:focus,
-                    .subconverter-advanced__trigger:focus,
-                    .ctl__box:focus-visible, .sub-ghost-btn:focus-visible, .subconverter-main-btn:focus-visible, .sub-checkbox:focus-visible,
-                    .subconverter-topbar__link:focus-visible, .subconverter-social-btn:focus-visible, .sub-dialog__close:focus-visible,
-                    .subconverter-advanced__trigger:focus-visible { outline: none; box-shadow: none; }
+                    /*
+                     * 移除点击/聚焦时的浏览器默认蓝色焦点框。
+                     * focus-visible 在现代浏览器（键盘tab/点击）都会触发蓝色轮廓，
+                     * 只写 outline:none 不够，必须同时覆盖 focus-visible。
+                     * 用通用 * 选择器 + !important，无视具体容器与组件。
+                     */
+                    *:focus,
+                    *:focus-visible {
+                        outline: none !important;
+                        outline-offset: 0 !important;
+                        box-shadow: none !important;
+                        text-decoration: none !important;
+                    }
+                    a:focus, a:focus-visible { outline: none !important; }
+                    /* 安卓 Chrome 触摸点击的一闪半透明蓝色蒙层 */
+                    * { -webkit-tap-highlight-color: transparent; }
 
                     /* 兜底：页面内任意可聚焦元素点击/聚焦都不出现蓝框 */
                     .subconverter-page :focus, .subconverter-page :focus-visible { outline: none !important; box-shadow: none !important; }

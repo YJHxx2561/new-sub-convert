@@ -88,9 +88,17 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
 
                     * { box-sizing: border-box; }
 
-                    /* 移除点击/聚焦时的浏览器默认蓝色焦点框 */
-                    button:focus, a:focus, input:focus, textarea:focus, select:focus, [tabindex]:focus,
-                    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: none; }
+                    /* 移除点击/聚焦时的浏览器默认蓝色焦点框（含 focus-visible） */
+                    *:focus,
+                    *:focus-visible {
+                        outline: none !important;
+                        outline-offset: 0 !important;
+                        box-shadow: none !important;
+                        text-decoration: none !important;
+                    }
+                    a:focus, a:focus-visible { outline: none !important; }
+                    /* 安卓 Chrome 触摸点击的一闪半透明蓝色蒙层 */
+                    * { -webkit-tap-highlight-color: transparent; }
 
                     /* 兜底：页面内任意可聚焦元素点击/聚焦都不出现蓝框 */
                     .subconverter-page :focus, .subconverter-page :focus-visible,
