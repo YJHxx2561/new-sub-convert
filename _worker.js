@@ -2124,7 +2124,11 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                         left: 0;
                         bottom: calc(100% + 10px);
                         width: 420px;
-                        max-width: 82vw;
+                        max-width: 86vw;
+                        max-height: min(420px, 62vh);
+                        overflow-y: auto;
+                        overscroll-behavior: contain;
+                        -webkit-overflow-scrolling: touch;
                         padding: 16px;
                         background: var(--panel);
                         border: 1px solid var(--line);
@@ -2286,6 +2290,8 @@ var e=(e,t,n)=>(r,i)=>{let a=-1;return o(0);async function o(s){if(s<=a)throw Er
                         .subconverter-social-btn { width: 44px; height: 44px; }
                         .output-group { flex-direction: column; }
                         .output-group .output-copy { width: 100%; justify-content: center; }
+                        .sub-popover__panel { width: 88vw; max-width: 88vw; left: 0; }
+                        .sub-popover__grid { grid-template-columns: 1fr; }
                     }
                 </style>
             </head>
