@@ -97,6 +97,10 @@ export function SubModal(): string {
                     .sub-modal__close:hover {
                         color: var(--primary-color);
                     }
+                    .sub-modal__close:focus,
+                    .sub-modal__close:focus-visible {
+                        outline: none;
+                    }
                     .sub-modal__body {
                         padding: 16px;
                     }

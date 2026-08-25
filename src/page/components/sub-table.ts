@@ -126,6 +126,11 @@ export function SubTable(): string {
                     .action-btn.danger {
                         color: #ff4d4f;
                     }
+                    .action-btn:focus,
+                    .action-btn:focus-visible {
+                        outline: none;
+                        box-shadow: none;
+                    }
                     .empty,
                     .loading {
                         padding: 28px 12px;

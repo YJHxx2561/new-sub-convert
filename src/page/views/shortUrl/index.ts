@@ -31,7 +31,7 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                      * 主题变量：与首页（subconvert 转换页）保持一致的设计令牌。
                      * 通过 body.light-mode / body.dark-mode 切换。
                      */
-                    body.light-mode .subconverter-page {
+                    body.light-mode {
                         --page-surface: #d8e0e5;
                         --page-grid: rgba(51, 65, 85, 0.05);
                         --bg: rgba(241, 245, 247, 0.84);
@@ -48,7 +48,7 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         --shadow: 0 24px 56px rgba(51, 65, 85, 0.12);
                     }
 
-                    body.dark-mode .subconverter-page {
+                    body.dark-mode {
                         --page-surface: transparent;
                         --page-grid: rgba(148, 163, 184, 0.05);
                         --bg: rgba(7, 16, 30, 0.78);
@@ -69,7 +69,7 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                      * 将旧设计系统（sub-* 组件）使用的令牌映射到首页主题令牌，
                      * 使 sub-table / sub-modal / sub-button / sub-form 等组件一套皮肤。
                      */
-                    .subconverter-page {
+                    body {
                         --background: var(--bg);
                         --background-primary: var(--panel);
                         --background-secondary: var(--soft);
@@ -82,7 +82,6 @@ export function showShortUrlPage(_request: Request, env: Env): Response {
                         --primary-color: var(--accent);
                         --primary-hover: var(--accent-strong);
                         --primary-active: var(--accent);
-                        --shadow: rgba(2, 6, 23, 0.4);
                         --radius: 12px;
                         --transition: all 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
                     }

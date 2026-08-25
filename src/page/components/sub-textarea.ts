@@ -51,7 +51,6 @@ export function SubTextarea(): string {
                     .sub-textarea__inner:focus {
                         outline: none;
                         border-color: var(--primary-color);
-                        box-shadow: 0 0 0 2px var(--shadow);
                     }
                     .sub-textarea__inner::placeholder {
                         color: var(--text-secondary);

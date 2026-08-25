@@ -68,6 +68,11 @@ export function SubButton(): string {
                             color: var(--text-disabled);
                         }
 
+                        .sub-button:focus,
+                        .sub-button:focus-visible {
+                            outline: none;
+                        }
+
                         /* 波纹效果 */
                         .sub-button::after {
                             content: '';
