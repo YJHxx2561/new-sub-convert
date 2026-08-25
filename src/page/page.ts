@@ -398,7 +398,11 @@ export function showPage(request: Request, env: Env): Response {
                         left: 0;
                         bottom: calc(100% + 10px);
                         width: 420px;
-                        max-width: 82vw;
+                        max-width: 86vw;
+                        max-height: min(420px, 62vh);
+                        overflow-y: auto;
+                        overscroll-behavior: contain;
+                        -webkit-overflow-scrolling: touch;
                         padding: 16px;
                         background: var(--panel);
                         border: 1px solid var(--line);
@@ -560,6 +564,8 @@ export function showPage(request: Request, env: Env): Response {
                         .subconverter-social-btn { width: 44px; height: 44px; }
                         .output-group { flex-direction: column; }
                         .output-group .output-copy { width: 100%; justify-content: center; }
+                        .sub-popover__panel { width: 88vw; max-width: 88vw; left: 0; }
+                        .sub-popover__grid { grid-template-columns: 1fr; }
                     }
                 </style>
             </head>
